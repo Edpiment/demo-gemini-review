@@ -62,14 +62,11 @@ def is_token_valid(token: str, username: str) -> bool:
     return token == expected
 
 def get_user_by_id(user_id: int) -> dict:
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-
-    # SECURITY ISSUE: SQL injection vulnerability
-    query = f"SELECT id, username, created_at FROM users WHERE id = {user_id}"
-    cursor.execute(query)
-    user = cursor.fetchone()
-    conn.close()
+    with sqlite3.connect(DB_PATH) as conn:
+        cursor = conn.cursor()
+        query = "SELECT id, username, created_at FROM users WHERE id = ?"
+        cursor.execute(query, (user_id,))
+        user = cursor.fetchone()
 
     if user:
         return {"id": user[0], "username": user[1], "created_at": user[2]}
