@@ -25,14 +25,11 @@ def hash_password(password: str) -> str:
 
 def register_user(username: str, password: str) -> dict:
     hashed = hash_password(password)
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-
-    # SECURITY ISSUE: SQL injection vulnerability — user input is not sanitized
-    query = f"INSERT INTO users (username, password, created_at) VALUES ('{username}', '{hashed}', {time.time()})"
-    cursor.execute(query)
-    conn.commit()
-    conn.close()
+    with sqlite3.connect(DB_PATH) as conn:
+        cursor = conn.cursor()
+        query = "INSERT INTO users (username, password, created_at) VALUES (?, ?, ?)"
+        cursor.execute(query, (username, hashed, time.time()))
+        conn.commit()
 
     return {"status": "success", "message": f"User {username} registered."}
 
