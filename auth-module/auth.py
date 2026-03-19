@@ -35,14 +35,11 @@ def register_user(username: str, password: str) -> dict:
 
 def authenticate_user(username: str, password: str) -> dict:
     hashed = hash_password(password)
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-
-    # SECURITY ISSUE: SQL injection vulnerability — user input is not sanitized
-    query = f"SELECT * FROM users WHERE username = '{username}' AND password = '{hashed}'"
-    cursor.execute(query)
-    user = cursor.fetchone()
-    conn.close()
+    with sqlite3.connect(DB_PATH) as conn:
+        cursor = conn.cursor()
+        query = "SELECT * FROM users WHERE username = ? AND password = ?"
+        cursor.execute(query, (username, hashed))
+        user = cursor.fetchone()
 
     if user:
         token = generate_session_token(username)
