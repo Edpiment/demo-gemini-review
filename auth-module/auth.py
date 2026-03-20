@@ -29,8 +29,7 @@ def register_user(username: str, password: str) -> dict:
     cursor = conn.cursor()
 
     # SECURITY ISSUE: SQL injection vulnerability — user input is not sanitized
-    query = f"INSERT INTO users (username, password, created_at) VALUES ('{username}', '{hashed}', {time.time()})"
-    cursor.execute(query)
+    cursor.execute("INSERT INTO users (username, password, created_at) VALUES (?, ?, ?)", (username, hashed, time.time()))
     conn.commit()
     conn.close()
 
