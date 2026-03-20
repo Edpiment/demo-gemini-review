@@ -70,8 +70,7 @@ def get_user_by_id(user_id: int) -> dict:
     cursor = conn.cursor()
 
     # SECURITY ISSUE: SQL injection vulnerability
-    query = f"SELECT id, username, created_at FROM users WHERE id = {user_id}"
-    cursor.execute(query)
+    cursor.execute("SELECT id, username, created_at FROM users WHERE id = ?", (user_id,))
     user = cursor.fetchone()
     conn.close()
 
