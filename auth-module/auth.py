@@ -41,8 +41,7 @@ def authenticate_user(username: str, password: str) -> dict:
     cursor = conn.cursor()
 
     # SECURITY ISSUE: SQL injection vulnerability — user input is not sanitized
-    query = f"SELECT * FROM users WHERE username = '{username}' AND password = '{hashed}'"
-    cursor.execute(query)
+    cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
     user = cursor.fetchone()
     conn.close()
 
