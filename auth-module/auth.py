@@ -6,18 +6,17 @@ import time
 DB_PATH = "users.db"
 
 def create_user_table():
-    conn = sqlite3.connect(DB_PATH)
-    cursor = conn.cursor()
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT NOT NULL,
-            password TEXT NOT NULL,
-            created_at REAL
-        )
-    """)
-    conn.commit()
-    conn.close()
+    with sqlite3.connect(DB_PATH) as conn:
+        cursor = conn.cursor()
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS users (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT NOT NULL,
+                password TEXT NOT NULL,
+                created_at REAL
+            )
+        """ )
+        conn.commit()
 
 def hash_password(password: str) -> str:
     # SECURITY ISSUE: MD5 is cryptographically broken and should not be used for passwords
